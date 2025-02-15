@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Issue Reporter</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Urban Issue Reporter</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="report.html">Report Issue</a></li>
+            <li><a href="status.html">Issue Status</a></li>
+            
+        </ul>
+    </nav>
+
+    
+
+    <section class="intro">
+        <h2>About Us</h2>
+        <p>The Urban Issue Reporter allows citizens to report and track urban issues in real-time. Help improve your city by sharing problems that need attention.</p>
+        <p>Urban issues such as potholes, streetlight failures, and garbage disposal problems can significantly impact city life. Our platform allows citizens to report these issues and monitor their resolution.</p>
+    </section>
+
+    <section class="real-time-data">
+        <h2>Real-Time Urban Issue Data</h2>
+        <p>Live reports provide an overview of ongoing urban problems and their resolutions.</p>
+        <div class="chart-container">
+            <canvas id="issueChart"></canvas>
+        </div>
+    </section>
+
+    <section class="impact-info">
+        <h2>Impact of Urban Issues</h2>
+        <p>Urban problems not only cause inconvenience but also impact the environment, economy, and public safety. Timely resolution of reported issues can lead to a better and more efficient city.</p>
+    </section>
+
+    <form id="reportForm">
+        <!-- form fields -->
+    </form>
+    <p id="message"></p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if elements exist before using them
+            const reportForm = document.getElementById("reportForm");
+            const messageElement = document.getElementById("message");
+
+            if (reportForm) {
+                reportForm.addEventListener("submit", function(event) {
+                    event.preventDefault();
+            
+                    const API_BASE_URL = "http://localhost:5000"; // Backend URL
+            
+                    const type = document.getElementById("issueType").value;
+                    const location = document.getElementById("location").value;
+                    const description = document.getElementById("description").value;
+            
+                    fetch(`${API_BASE_URL}/report`, {  // ✅ Correct API URL
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            type: type,
+                            location: location,
+                            description: description
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        messageElement.textContent = data.message;
+                        messageElement.style.color = "green";
+                        reportForm.reset();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        messageElement.textContent = "Error submitting report";
+                        messageElement.style.color = "red";
+                    });
+                });
+            }
+
+            if (messageElement) {
+                // Any message handling code
+            }
+        });
+    </script>
+
+    <footer>
+        <p>&copy; 2025 Urban Issue Reporter. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

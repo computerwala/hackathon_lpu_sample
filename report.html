@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report an Issue</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Report an Urban Issue</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="status.html">Issue Status</a></li>
+            
+        </ul>
+    </nav>
+
+    <section>
+        <form id="reportForm">
+            <label for="issueType">Issue Type:</label>
+            <select id="issueType" required>
+                <option value="Traffic Congestion">Traffic Congestion</option>
+                <option value="Air Pollution">Air Pollution</option>
+                <option value="Infrastructure Damage">Infrastructure Damage</option>
+                <option value="Potholes">Potholes</option>
+                <option value="Street Light issue">Street light issue</option>
+
+            </select>
+            <label for="location">Location:</label>
+            <input type="text" id="location" placeholder="Enter location" required>
+            <label for="description">Description:</label>
+            <textarea id="description" placeholder="Describe the issue" required></textarea>
+            <button type="submit">Submit Report</button>
+        </form>
+
+        <p id="message"></p>
+    </section>
+
+    <script>
+      document.getElementById("reportForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const API_BASE_URL = "http://localhost:5000"; // Backend URL
+
+    const type = document.getElementById("issueType").value;
+    const location = document.getElementById("location").value;
+    const description = document.getElementById("description").value;
+
+    fetch("/report", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            type: type,
+            location: location,
+            description: description
+        })
+    })
+    .then(response => {
+        console.log("Raw Response:", response);
+        return response.text();  // ✅ Get raw text before parsing JSON
+    })
+    .then(data => {
+        console.log("Response Data:", data);
+        try {
+            const jsonData = JSON.parse(data);
+            document.getElementById("message").textContent = jsonData.message;
+            document.getElementById("message").style.color = "green";
+            document.getElementById("reportForm").reset();
+        } catch (error) {
+            console.error("JSON Parse Error:", error);
+            document.getElementById("message").textContent = "Error: Invalid response from server";
+            document.getElementById("message").style.color = "red";
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
+        document.getElementById("message").textContent = "Error submitting report";
+        document.getElementById("message").style.color = "red";
+    });
+});
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Status - Urban Issue Reporter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="report.html">Report Issue</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Reported Issues</h1>
+    </header>
+
+    <section>
+        <div id="issuesContainer">
+            <!-- Reported issues will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/issues')
+                .then(response => response.json())
+                .then(issues => {
+                    const issuesContainer = document.getElementById("issuesContainer");
+                    if (issues.length === 0) {
+                        issuesContainer.innerHTML = "<p>No reported issues yet.</p>";
+                    } else {
+                        issues.forEach(issue => {
+                            const card = document.createElement("div");
+                            card.className = "card";
+                            card.innerHTML = `
+                                <h2>${issue.type}</h2>
+                                <p><strong>Location:</strong> ${issue.location}</p>
+                                <p><strong>Description:</strong> ${issue.description}</p>
+                                <p><strong>Status:</strong> ${issue.status}</p>
+                            `;
+                            issuesContainer.appendChild(card);
+                        });
+                    }
+                });
+        });
+    </script>
+
+    <footer>
+        <p>&copy; 2025 Urban Issue Reporter. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>
